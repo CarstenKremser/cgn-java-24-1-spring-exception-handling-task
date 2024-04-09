@@ -1,14 +1,16 @@
 package de.neuefische.springexceptionhandlingtask;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import de.neuefische.springexceptionhandlingtask.dto.ErrorMessage;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/animals")
+@RestControllerAdvice
 public class AnimalController {
 
     @GetMapping("{species}")
@@ -22,5 +24,28 @@ public class AnimalController {
     @GetMapping
     String getAllAnimals() {
         throw new NoSuchElementException("No Animals found");
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    ResponseEntity<ErrorMessage>  handleIllegalArgumentException(IllegalArgumentException ex) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/problem+json");
+
+        return new ResponseEntity<>(
+                new ErrorMessage(400, ex.getMessage()),
+                headers,
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    ResponseEntity<ErrorMessage> handleNoSuchElementException(NoSuchElementException ex) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/problem+json");
+
+        return new ResponseEntity<>(
+                new ErrorMessage(404, ex.getMessage()),
+                headers,
+                HttpStatus.NOT_FOUND
+        );
     }
 }
