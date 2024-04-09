@@ -23,4 +23,16 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND
         );
     }
+
+    @ExceptionHandler(Exception.class)
+    ResponseEntity<ErrorMessage> handleException(Exception ex) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/problem+json");
+
+        return new ResponseEntity<>(
+                new ErrorMessage(500, ex.getMessage()),
+                headers,
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
 }
