@@ -36,16 +36,4 @@ public class CarController {
                 headers,
                 HttpStatus.BAD_REQUEST);
     }
-
-    @ExceptionHandler(NoSuchElementException.class)
-    ResponseEntity<ErrorMessage> handleNoSuchElementException(NoSuchElementException ex) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/problem+json");
-
-        return new ResponseEntity<>(
-                new ErrorMessage(404, ex.getMessage()),
-                headers,
-                HttpStatus.NOT_FOUND
-        );
-    }
 }
